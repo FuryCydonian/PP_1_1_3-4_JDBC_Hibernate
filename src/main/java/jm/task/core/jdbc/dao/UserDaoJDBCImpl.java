@@ -3,19 +3,13 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    public UserDaoJDBCImpl() {
-
-    }
+    public UserDaoJDBCImpl() {}
 
     Connection connection;
-
     {
         try {
             connection = Util.getConnection();
@@ -51,6 +45,15 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Users VALUES(1, ?, ?, ?)")) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     public void removeUserById(long id) {
@@ -58,6 +61,12 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
+        try (Statement statement = connection.createStatement()) {
+            String SQL = "SELECT * FROM Users";
+            statement.executeQuery(SQL);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
