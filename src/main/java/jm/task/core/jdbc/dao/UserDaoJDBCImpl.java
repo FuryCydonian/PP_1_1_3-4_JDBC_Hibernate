@@ -4,12 +4,14 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
     public UserDaoJDBCImpl() {}
 
     Connection connection;
+
     {
         try {
             connection = Util.getConnection();
@@ -61,13 +63,23 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
+        List<User> listOfUsers = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
             String SQL = "SELECT * FROM Users";
-            statement.executeQuery(SQL);
+            ResultSet resultSet = statement.executeQuery(SQL);
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setName(resultSet.getString("name"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setAge(resultSet.getByte("age"));
+                listOfUsers.add(user);
+            }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        return null;
+        return listOfUsers;
     }
 
     public void cleanUsersTable() {
