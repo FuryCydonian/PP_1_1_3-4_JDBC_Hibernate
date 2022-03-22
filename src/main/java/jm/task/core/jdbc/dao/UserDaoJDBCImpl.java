@@ -14,7 +14,15 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    Connection connection = Util.getConnection();
+    Connection connection;
+
+    {
+        try {
+            connection = Util.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void createUsersTable() {
         try {
@@ -25,15 +33,20 @@ public class UserDaoJDBCImpl implements UserDao {
                     "lastName varchar" +
                     "age int" +
                     ")";
-            ResultSet resultSet = statemet.executeQuery(SQL);
-
+            statemet.executeUpdate(SQL);
         } catch (SQLException e) {
-            System.out.println("Table is already exist");
+            System.out.println(e.getMessage() + " Table already exists");
         }
     }
 
     public void dropUsersTable() {
-
+        try {
+            Statement statemet = connection.createStatement();
+            String SQL = "DROP TABLE Users";
+            statemet.executeUpdate(SQL);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage() + " Table doesn't exist");
+        }
     }
 
     public void saveUser(String name, String lastName, byte age) {
