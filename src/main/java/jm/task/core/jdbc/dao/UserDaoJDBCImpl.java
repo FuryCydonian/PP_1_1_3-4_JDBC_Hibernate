@@ -26,14 +26,14 @@ public class UserDaoJDBCImpl implements UserDao {
     @Override
     public void createUsersTable() {
         try {
-            Statement statemet = connection.createStatement();
+            Statement statement = connection.createStatement();
             String SQL = "CREATE TABLE Users (" +
                     "id int" +
                     "name varchar" +
                     "lastName varchar" +
                     "age int" +
                     ")";
-            statemet.executeUpdate(SQL);
+            statement.executeUpdate(SQL);
         } catch (SQLException e) {
             System.out.println(e.getMessage() + " Table already exists");
         }
