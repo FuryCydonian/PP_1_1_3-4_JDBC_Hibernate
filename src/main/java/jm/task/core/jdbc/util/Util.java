@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Util {
     // реализуйте настройку соеденения с БД
-    private static final String URL = "jdbc:mysql://localhost:3306/test_PP_bir"; // + "?useSSL=false" + "&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/test_db?useSSL=false&serverTimezone=UTC";
     private static final String USERNAME = "fury_cydonian";
     private static final String PASSWORD = "ThomasBorchert10!";
 
@@ -20,5 +20,9 @@ public class Util {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    public static Connection getConnectionHibernate() {
+        return null;
     }
 }
