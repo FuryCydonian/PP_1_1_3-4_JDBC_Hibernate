@@ -47,6 +47,7 @@ public class Util {
             prop.setProperty("hibernate.connection.url", URL);
             prop.setProperty("hibernate.connection.username", USERNAME);
             prop.setProperty("hibernate.connection.password", PASSWORD);
+            prop.setProperty("hibernate.current_session_context_class", "thread");
             prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
 
             prop.setProperty("hibernate.hbm2ddl.auto", "create");

@@ -2,13 +2,11 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-import net.bytebuddy.asm.MemberSubstitution;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -17,12 +15,16 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     private static SessionFactory sessionFactory;
-    private static Session session;
 
     static {
         try {
             sessionFactory = Util.getSessionFactory();
         } catch (ExceptionInInitializerError e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            sessionFactory.openSession();
+        } catch (HibernateException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -39,21 +41,19 @@ public class UserDaoHibernateImpl implements UserDao {
             System.out.println("Users table has created");
         } catch (HibernateException e) {
             System.out.println(e.getMessage());
-//        e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
         try (Session session = sessionFactory.getCurrentSession()) {
-            String SQL = String.format("DROP TABLE %s.Users", Util.getDb());
+            String SQL = String.format("DROP TABLE %s.Users;", Util.getDb());
             session.beginTransaction();
             session.createNativeQuery(SQL).executeUpdate();
             session.getTransaction().commit();
             System.out.println("Users table has dropped");
         } catch (HibernateException e) {
             System.out.println(e.getMessage());
-//        e.printStackTrace();
         }
     }
 
@@ -68,16 +68,38 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-
+        try (Session session = sessionFactory.getCurrentSession()) {
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.delete(user);
+            session.getTransaction().commit();
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        List<User> users = new ArrayList<>();
+        try (Session session = sessionFactory.getCurrentSession()) {
+            session.beginTransaction();
+            String HQL = "from User";
+            users = session.createQuery(HQL).getResultList();
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
+        return users;
     }
 
     @Override
     public void cleanUsersTable() {
-
+        try (Session session = sessionFactory.getCurrentSession()) {
+            String SQL = String.format("DELETE FROM %s.Users;", Util.getDb());
+            session.beginTransaction();
+            session.createNativeQuery(SQL).executeUpdate();
+            session.getTransaction().commit();
+            System.out.println("Users table has cleaned");
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
