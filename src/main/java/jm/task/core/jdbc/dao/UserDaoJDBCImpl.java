@@ -20,32 +20,31 @@ public class UserDaoJDBCImpl implements UserDao {
             connection = Util.getConnection();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-//            e.printStackTrace();
         }
     }
 
     @Override
     public void createUsersTable() {
-        try {
-            Statement statement = connection.createStatement();
-            String SQL = "CREATE TABLE Users (id int NOT NULL, name varchar(45), lastName varchar(45), age int, PRIMARY KEY(id));";
+        try (Statement statement = connection.createStatement()) {
+            String SQL = "CREATE TABLE IF NOT EXISTS Users (" +
+                    "id int NOT NULL PRIMARY KEY, " +
+                    "name varchar(45), " +
+                    "lastName varchar(45), " +
+                    "age int);";
             statement.executeUpdate(SQL);
             System.out.println("Users table has created");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-//        e.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        try {
-            Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement()) {
             String SQL = "DROP TABLE Users";
             statement.executeUpdate(SQL);
             System.out.println("Users table has dropped");
         } catch (SQLException e) {
-//            e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
@@ -63,10 +62,8 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.executeUpdate();
             System.out.printf("User с именем - %s добавлен в базу данных\n", name);
         } catch (SQLException e) {
-//            e.printStackTrace();
             System.out.println(e.getMessage());
         }
-
     }
 
     @Override
@@ -78,7 +75,6 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.executeUpdate();
             System.out.printf("User with id = %d has removed\n", id);
         } catch (SQLException e) {
-//            e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
@@ -112,7 +108,6 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(SQL);
             System.out.println("Users table has cleaned");
         } catch (SQLException e) {
-//            e.printStackTrace();
             System.out.println(e.getMessage());
         }
     }
