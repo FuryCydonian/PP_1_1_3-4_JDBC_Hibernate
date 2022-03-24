@@ -44,28 +44,6 @@ public class Util {
 
     private static SessionFactory sessionFactory;
 
-//    static {
-////        try {
-////            Properties prop = new Properties();
-////            prop.setProperty("hibernate.connection.url", URL);
-////            prop.setProperty("hibernate.connection.username", USERNAME);
-////            prop.setProperty("hibernate.connection.password", PASSWORD);
-////            prop.setProperty("hibernate.current_session_context_class", "thread");
-////            prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
-////
-////            prop.setProperty("hibernate.hbm2ddl.auto", "create");
-////
-////            sessionFactory = new Configuration()
-////                    .addProperties(prop)
-////                    //.addPackage("com.kat")
-////                    .addAnnotatedClass(User.class)
-////                    .buildSessionFactory()
-////            ;
-////        } catch (Exception e) {
-////            throw new ExceptionInInitializerError(e);
-////        }
-//    }
-
     public static String getDb() {
         return DB;
     }
@@ -73,11 +51,6 @@ public class Util {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-
-//    public static SessionFactory getSessionFactory() throws ExceptionInInitializerError {
-//
-//        return  sessionFactory;
-//    }
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
@@ -112,8 +85,4 @@ public class Util {
         }
         return sessionFactory;
     }
-
-//    public static Session getSession() throws HibernateException {
-//        return sessionFactory.getCurrentSession();
-//    }
 }
