@@ -1,5 +1,6 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.HibernateException;
@@ -14,11 +15,10 @@ import java.util.Properties;
 
 public class Util {
     // реализуйте настройку соеденения с БД
-    private static final String URL = "jdbc:mysql://localhost:3306/test_PP_bir?useSSL=false&serverTimezone=UTC";
+    private static final String DB = "test_PP_bir";
+    private static final String URL = "jdbc:mysql://localhost:3306/" + DB + "?useSSL=false&serverTimezone=UTC";
     private static final String USERNAME = "fury_cydonian";
     private static final String PASSWORD = "ThomasBorchert10!";
-
-    private static final SessionFactory sessionFactory;
 
     static {
         try {
@@ -39,6 +39,8 @@ public class Util {
 //        }
 //    }
 
+    private static final SessionFactory sessionFactory;
+
     static {
         try {
             Properties prop = new Properties();
@@ -52,24 +54,27 @@ public class Util {
             sessionFactory = new Configuration()
                     .addProperties(prop)
                     //.addPackage("com.kat")
-//                    .addAnnotatedClass(Vehicle.class)
+                    .addAnnotatedClass(User.class)
                     .buildSessionFactory()
             ;
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
         }
-        catch (Exception ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
+    }
+
+    public static String getDb() {
+        return DB;
     }
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-    public static SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory() throws ExceptionInInitializerError {
         return  sessionFactory;
     }
 
-    public static Session getSession() throws HibernateException {
-        return sessionFactory.openSession();
-    }
+//    public static Session getSession() throws HibernateException {
+//        return sessionFactory.getCurrentSession();
+//    }
 }
