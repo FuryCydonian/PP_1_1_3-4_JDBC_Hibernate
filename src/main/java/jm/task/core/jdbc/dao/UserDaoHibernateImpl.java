@@ -24,11 +24,10 @@ public class UserDaoHibernateImpl implements UserDao {
         }
     }
 
-
-
     @Override
     public void createUsersTable() {
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             String SQL = "CREATE TABLE IF NOT EXISTS users " +
                     "(id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                     "name VARCHAR(50) NOT NULL, lastName VARCHAR(50) NOT NULL, " +
@@ -38,72 +37,95 @@ public class UserDaoHibernateImpl implements UserDao {
             session.getTransaction().commit();
             System.out.println("Users table has created");
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             String SQL = "DROP TABLE IF EXISTS Users;";
             session.beginTransaction();
             session.createNativeQuery(SQL).addEntity(User.class).executeUpdate();
             session.getTransaction().commit();
             System.out.println("Users table has dropped");
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             session.beginTransaction();
             session.persist(new User(name, lastName, age));
             session.getTransaction().commit();
             System.out.printf("User с именем - %s добавлен в базу данных\n", name);
-        } catch (HibernateException e) {
+        } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             session.beginTransaction();
             User user = session.get(User.class, id);
             session.delete(user);
             session.getTransaction().commit();
             System.out.printf("User with id = %d has removed\n", id);
-        } catch (HibernateException e) {
+        } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             session.beginTransaction();
             String HQL = "from User";
             users = session.createQuery(HQL, User.class).list();
             session.getTransaction().commit();
-        } catch (HibernateException e) {
+        } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
         return users;
     }
 
     @Override
     public void cleanUsersTable() {
-        try (Session session = sessionFactory.openSession()) {
+        Session session = sessionFactory.openSession();
+        try {
             String SQL = String.format("DELETE FROM %s.Users;", Util.getDb());
             session.beginTransaction();
             session.createNativeQuery(SQL).executeUpdate();
             session.getTransaction().commit();
             System.out.println("Users table has cleaned");
-        } catch (HibernateException e) {
+        } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
+        } finally {
+            session.close();
         }
     }
 }
