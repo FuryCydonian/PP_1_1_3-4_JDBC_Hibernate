@@ -84,5 +84,9 @@ public class Util {
             }
         }
         return sessionFactory;
+        
+        public static void closeessionFactory() {
+            sessionFactory.close();
+        }
     }
 }
